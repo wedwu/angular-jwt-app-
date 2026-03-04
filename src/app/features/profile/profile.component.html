@@ -1,0 +1,48 @@
+<div class="profile-page">
+  <div class="profile-header"><h1>My Profile</h1><p>Manage your account information</p></div>
+  <div class="profile-layout">
+    <mat-card class="avatar-card">
+      <div class="big-avatar" [style.background]="roleColor">{{ initials }}</div>
+      <h2>{{ user.firstName }} {{ user.lastName }}</h2>
+      <p class="username"> {{ user.username }}</p>
+      <span class="role-pill" [style.background]="roleColor+'20'" [style.color]="roleColor">{{ user.role | titlecase }}</span>
+      <mat-divider class="divider"></mat-divider>
+      <div class="meta-list">
+        <div class="meta-item"><mat-icon>email</mat-icon><span>{{ user.email }}</span></div>
+        <div class="meta-item"><mat-icon>event</mat-icon><span>Joined {{ user.createdAt | date:'mediumDate' }}</span></div>
+        <div class="meta-item">
+          <mat-icon [style.color]="user.isActive ? '#43a047' : '#e53935'">{{ user.isActive ? 'check_circle' : 'cancel' }}</mat-icon>
+          <span>{{ user.isActive ? 'Active account' : 'Inactive' }}</span>
+        </div>
+      </div>
+    </mat-card>
+    <mat-card class="edit-card">
+      <mat-card-header>
+        <mat-card-title style="display:flex;align-items:center;gap:8px"><mat-icon>edit</mat-icon> Edit Profile</mat-card-title>
+        <mat-card-subtitle>Update your personal information</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="profileForm" (ngSubmit)="save()" class="edit-form">
+          <div class="form-row">
+            <mat-form-field appearance="outline"><mat-label>First Name</mat-label>
+              <mat-icon matPrefix>person</mat-icon><input matInput formControlName="firstName"><mat-error>Required</mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="outline"><mat-label>Last Name</mat-label>
+              <mat-icon matPrefix>person</mat-icon><input matInput formControlName="lastName"><mat-error>Required</mat-error>
+            </mat-form-field>
+          </div>
+          <mat-form-field appearance="outline" style="width:100%"><mat-label>Email</mat-label>
+            <mat-icon matPrefix>email</mat-icon><input matInput formControlName="email" type="email"><mat-error>Valid email required</mat-error>
+          </mat-form-field>
+          <div class="form-actions">
+            <button mat-raised-button color="primary" type="submit" [disabled]="profileForm.invalid || isSaving">
+              <mat-spinner *ngIf="isSaving" diameter="18"></mat-spinner>
+              <mat-icon *ngIf="!isSaving">save</mat-icon>
+              {{ isSaving ? 'Saving...' : 'Save Changes' }}
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

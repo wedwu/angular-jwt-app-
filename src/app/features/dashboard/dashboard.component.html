@@ -1,0 +1,118 @@
+<div class="dashboard">
+  <!-- Page header -->
+  <div class="dash-header">
+    <div>
+      <h1>Dashboard</h1>
+      <p>Welcome back, <strong>{{ currentUser?.firstName }} {{ currentUser?.lastName }}</strong></p>
+    </div>
+    <button mat-raised-button color="primary" (click)="load()">
+      <mat-icon>refresh</mat-icon> Refresh
+    </button>
+  </div>
+
+  <!-- Loading -->
+  <div class="center-spinner" *ngIf="isLoading">
+    <mat-spinner diameter="52"></mat-spinner>
+    <p>Loading dashboard…</p>
+  </div>
+
+  <ng-container *ngIf="!isLoading">
+
+    <!-- ── Stats cards ── -->
+    <div class="stats-row">
+      <app-stat-card
+        *ngFor="let s of statDefs"
+        [label]="s.label"
+        [value]="getValue(s.key)"
+        [icon]="s.icon"
+        [color]="s.color"
+        [prefix]="s.prefix"
+        [suffix]="s.suffix">
+      </app-stat-card>
+    </div>
+
+    <!-- ── Content row ── -->
+    <div class="content-row">
+
+      <!-- Activity feed -->
+      <mat-card class="activity-card">
+        <mat-card-header>
+          <mat-card-title class="card-title">
+            <mat-icon style="color:#3f51b5">timeline</mat-icon>
+            Recent Activity
+          </mat-card-title>
+          <mat-card-subtitle>Latest {{ activity.length }} events</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <app-activity-feed [items]="activity"></app-activity-feed>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Right column -->
+      <div class="right-col">
+
+        <!-- Task progress -->
+        <mat-card class="tasks-card">
+          <mat-card-header>
+            <mat-card-title class="card-title">
+              <mat-icon style="color:#43a047">task_alt</mat-icon>
+              Task Progress
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content *ngIf="stats">
+            <div class="completion-ring">
+              <span class="big-pct">{{ completionPct }}%</span>
+              <span class="pct-label">Complete</span>
+            </div>
+            <mat-progress-bar
+              mode="determinate"
+              [value]="completionPct"
+              color="primary"
+              class="task-bar">
+            </mat-progress-bar>
+            <div class="task-legend">
+              <div class="legend-item">
+                <span class="dot green"></span>
+                Completed: {{ stats.completedTasks }}
+              </div>
+              <div class="legend-item">
+                <span class="dot orange"></span>
+                Pending: {{ stats.pendingTasks }}
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Recent users -->
+        <mat-card class="recent-users-card">
+          <mat-card-header>
+            <mat-card-title class="card-title">
+              <mat-icon style="color:#e91e63">group</mat-icon>
+              Recent Users
+            </mat-card-title>
+            <button mat-icon-button routerLink="/users"
+                    matTooltip="View all users" style="margin-left:auto">
+              <mat-icon>open_in_new</mat-icon>
+            </button>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="user-list">
+              <div class="user-row" *ngFor="let u of recentUsers">
+                <div class="avatar" [style.background]="roleColor(u.role)">{{ initials(u) }}</div>
+                <div class="user-info">
+                  <span class="name">{{ u.firstName }} {{ u.lastName }}</span>
+                  <span class="email">{{ u.email }}</span>
+                </div>
+                <span class="status-dot"
+                      [class.active]="u.isActive"
+                      [matTooltip]="u.isActive ? 'Active' : 'Inactive'">
+                </span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+      </div>
+    </div>
+  </ng-container>
+</div>

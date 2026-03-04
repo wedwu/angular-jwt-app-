@@ -1,0 +1,54 @@
+.dashboard {
+  padding: 24px;
+  max-width: 1440px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.dash-header {
+  display: flex; justify-content: space-between;
+  align-items: flex-start; flex-wrap: wrap; gap: 16px;
+  h1 { font-size: 1.9rem; font-weight: 700; margin: 0; }
+  p  { font-size: 0.9rem; color: #666; margin-top: 4px; }
+}
+.center-spinner {
+  display: flex; flex-direction: column;
+  align-items: center; padding: 60px; gap: 16px; color: #888;
+}
+.stats-row {
+  display: flex; gap: 16px; flex-wrap: wrap;
+  > * { flex: 1; min-width: 180px; }
+}
+.content-row {
+  display: flex; gap: 24px; flex-wrap: wrap; align-items: flex-start;
+  .activity-card { flex: 2; min-width: 300px; border-radius: 12px !important; }
+  .right-col { flex: 1; min-width: 260px; display: flex; flex-direction: column; gap: 24px; }
+}
+.card-title { display: flex; align-items: center; gap: 8px; }
+.tasks-card, .recent-users-card { border-radius: 12px !important; }
+.completion-ring {
+  text-align: center; margin: 8px 0 12px;
+  .big-pct { display: block; font-size: 2.8rem; font-weight: 800; color: #3f51b5; }
+  .pct-label { font-size: 0.85rem; color: #888; }
+}
+.task-bar { height: 8px !important; border-radius: 4px !important; margin-bottom: 14px; }
+.task-legend {
+  display: flex; gap: 20px; flex-wrap: wrap;
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; }
+  .dot { width: 10px; height: 10px; border-radius: 50%;
+    &.green  { background: #43a047; }
+    &.orange { background: #fb8c00; } }
+}
+.user-list { display: flex; flex-direction: column; gap: 10px; }
+.user-row {
+  display: flex; align-items: center; gap: 12px;
+  .avatar { width: 36px; height: 36px; border-radius: 50%; display: flex;
+    align-items: center; justify-content: center;
+    color: white; font-size: 0.72rem; font-weight: 700; flex-shrink: 0; }
+  .user-info { flex: 1; display: flex; flex-direction: column; gap: 2px; overflow: hidden;
+    .name  { font-size: 0.85rem; font-weight: 600; }
+    .email { font-size: 0.75rem; color: #888; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #ccc; flex-shrink: 0;
+    &.active { background: #43a047; } }
+}

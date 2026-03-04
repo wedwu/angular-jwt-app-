@@ -1,0 +1,41 @@
+@use '@angular/material' as mat;
+@include mat.core();
+
+$primary: mat.define-palette(mat.$indigo-palette, 700);
+$accent:  mat.define-palette(mat.$pink-palette, A200);
+$warn:    mat.define-palette(mat.$red-palette);
+
+$theme: mat.define-light-theme((
+  color: (primary: $primary, accent: $accent, warn: $warn),
+  typography: mat.define-typography-config(),
+  density: 0
+));
+
+@include mat.all-component-themes($theme);
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+  background: #f5f7fa;
+  color: #333;
+}
+
+// ── Flexbox utilities ──────────────────────────────────────────────
+.flex         { display: flex; }
+.flex-col     { display: flex; flex-direction: column; }
+.flex-center  { display: flex; align-items: center; justify-content: center; }
+.flex-between { display: flex; align-items: center; justify-content: space-between; }
+.flex-1       { flex: 1; }
+.flex-wrap    { flex-wrap: wrap; }
+.gap-8        { gap: 8px; }
+.gap-16       { gap: 16px; }
+.gap-24       { gap: 24px; }
+
+// ── Snackbar overrides ─────────────────────────────────────────────
+.success-snack { background: #43a047 !important; color: #fff !important; }
+.error-snack   { background: #e53935 !important; color: #fff !important; }
+
+// ── Card base ──────────────────────────────────────────────────────
+mat-card { border-radius: 12px !important; }

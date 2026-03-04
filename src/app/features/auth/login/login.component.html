@@ -1,0 +1,66 @@
+<div class="login-page">
+  <div class="bg-blobs">
+    <div class="blob b1"></div>
+    <div class="blob b2"></div>
+    <div class="blob b3"></div>
+  </div>
+
+  <mat-card class="login-card mat-elevation-z8">
+    <!-- Header -->
+    <div class="card-header">
+      <div class="logo-ring">
+        <mat-icon>lock_open</mat-icon>
+      </div>
+      <h1>Angular JWT App</h1>
+      <p>Sign in to your account</p>
+    </div>
+
+    <!-- Error banner -->
+    <div class="error-banner" *ngIf="error">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ error }}</span>
+    </div>
+
+    <!-- Form -->
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Username</mat-label>
+        <mat-icon matPrefix class="prefix-icon">person</mat-icon>
+        <input matInput formControlName="username" autocomplete="username" [disabled]="isLoading">
+        <mat-error *ngIf="u.hasError('required')">Username is required</mat-error>
+        <mat-error *ngIf="u.hasError('minlength')">Minimum 3 characters</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Password</mat-label>
+        <mat-icon matPrefix class="prefix-icon">lock</mat-icon>
+        <input matInput formControlName="password"
+               [type]="hidePassword ? 'password' : 'text'"
+               autocomplete="current-password" [disabled]="isLoading">
+        <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword">
+          <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        <mat-error *ngIf="p.hasError('required')">Password is required</mat-error>
+        <mat-error *ngIf="p.hasError('minlength')">Minimum 6 characters</mat-error>
+      </mat-form-field>
+
+      <button mat-raised-button color="primary" type="submit"
+              class="submit-btn w-full" [disabled]="form.invalid || isLoading">
+        <mat-spinner *ngIf="isLoading" diameter="18" class="btn-spinner"></mat-spinner>
+        <mat-icon *ngIf="!isLoading">login</mat-icon>
+        <span>{{ isLoading ? 'Signing in…' : 'Sign In' }}</span>
+      </button>
+    </form>
+
+    <!-- Demo accounts -->
+    <mat-divider class="divider"></mat-divider>
+    <p class="demo-label">Quick Login — Demo Accounts</p>
+    <div class="demo-row">
+      <button mat-stroked-button *ngFor="let d of demos"
+              (click)="fillDemo(d)" [disabled]="isLoading">
+        <mat-icon>{{ d.icon }}</mat-icon>
+        {{ d.label }}
+      </button>
+    </div>
+  </mat-card>
+</div>

@@ -1,0 +1,11 @@
+.navbar { display: flex !important; justify-content: space-between !important; padding: 0 20px !important; height: 56px !important; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.18); }
+.nav-left { display: flex; align-items: center; gap: 28px; } .nav-right { display: flex; align-items: center; gap: 10px; }
+.brand { display: flex; align-items: center; gap: 8px; cursor: pointer; color: white; text-decoration: none; font-size: 1.05rem; font-weight: 700; mat-icon { font-size: 22px; } }
+.nav-links { display: flex; gap: 4px; }
+.nav-link { display: flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: 6px; text-decoration: none; color: rgba(255,255,255,.8); font-size: 0.88rem; font-weight: 500; transition: background .15s;
+  mat-icon { font-size: 18px; width: 18px; height: 18px; } &:hover { background: rgba(255,255,255,.1); color: white; } &.active { background: rgba(255,255,255,.2); color: white; } }
+.role-chip { background: rgba(255,255,255,.2); color: white; padding: 3px 10px; border-radius: 100px; font-size: 0.74rem; font-weight: 700; text-transform: uppercase; letter-spacing: .5px; }
+.user-btn { display: flex !important; align-items: center !important; gap: 6px !important; color: white !important; }
+.avatar { width: 28px; height: 28px; border-radius: 50%; background: rgba(255,255,255,.3); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; color: white; }
+.menu-info { padding: 10px 14px; display: flex; flex-direction: column; gap: 2px; strong { font-size: .88rem; } small { color: #888; font-size: .76rem; } }
+.logout-btn { color: #e53935 !important; }

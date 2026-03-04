@@ -1,0 +1,153 @@
+.login-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #3f51b5 0%, #7c4dff 55%, #e91e63 100%);
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.bg-blobs {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+
+  .blob {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.07);
+
+    &.b1 { width: 420px; height: 420px; top: -130px; left: -130px; }
+    &.b2 { width: 260px; height: 260px; bottom: -80px; right: -80px; }
+    &.b3 { width: 180px; height: 180px; top: 40%; left: 65%; }
+  }
+}
+
+.login-card {
+  width: 100%;
+  max-width: 430px;
+  border-radius: 18px !important;
+  padding: 40px 36px;
+  position: relative;
+  z-index: 1;
+}
+
+.card-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 28px;
+
+  .logo-ring {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3f51b5, #7c4dff);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    box-shadow: 0 6px 24px rgba(63, 81, 181, 0.45);
+
+    mat-icon {
+      color: white;
+      font-size: 28px;
+      width: 28px;
+      height: 28px;
+    }
+  }
+
+  h1 {
+    font-size: 1.55rem;
+    font-weight: 800;
+    margin: 0;
+    color: #222;
+  }
+
+  p {
+    font-size: 0.88rem;
+    color: #888;
+    margin-top: 5px;
+  }
+}
+
+.error-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #fde8e8;
+  border-left: 4px solid #e53935;
+  color: #b71c1c;
+  padding: 10px 14px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  font-size: 0.86rem;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.w-full { width: 100%; }
+
+.prefix-icon {
+  color: #999;
+  margin-right: 4px;
+}
+
+.submit-btn {
+  height: 48px;
+  font-size: 0.96rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 10px;
+  border-radius: 10px !important;
+  letter-spacing: 0.3px;
+}
+
+.btn-spinner { display: inline-block; }
+
+.divider { margin: 24px 0 16px; }
+
+.demo-label {
+  text-align: center;
+  font-size: 0.75rem;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+}
+
+.demo-row {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+
+  button {
+    font-size: 0.78rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
