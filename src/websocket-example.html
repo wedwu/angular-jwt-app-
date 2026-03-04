@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WebSocket — Preamble · Kind · Protocol</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Syne:wght@400;700;800&display=swap');
+  :root {
+    --bg:#0a0c0f;--surface:#111318;--border:#1e2128;--accent:#00e5ff;
+    --accent2:#7c3aed;--green:#22d3a6;--red:#ff4d6d;--yellow:#fbbf24;
+    --text:#e2e8f0;--muted:#4a5568;--code-bg:#0d1117;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:'JetBrains Mono',monospace;min-height:100vh;padding:2rem}
+  header{display:flex;align-items:baseline;gap:1rem;margin-bottom:2.5rem;border-bottom:1px solid var(--border);padding-bottom:1.5rem}
+  h1{font-family:'Syne',sans-serif;font-weight:800;font-size:1.6rem;letter-spacing:-0.02em;color:var(--accent)}
+  .subtitle{font-size:.72rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase}
+  .layout{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+  @media(max-width:900px){.layout{grid-template-columns:1fr}}
+  .panel{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+  .panel-header{padding:.75rem 1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.5rem;font-size:.7rem;color:var(--muted);letter-spacing:.12em;text-transform:uppercase}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--muted)}
+  .dot.green{background:var(--green);box-shadow:0 0 6px var(--green)}
+  .dot.red{background:var(--red);box-shadow:0 0 6px var(--red)}
+  .dot.yellow{background:var(--yellow);box-shadow:0 0 6px var(--yellow)}
+  .config-body{padding:1.25rem;display:flex;flex-direction:column;gap:1rem}
+  .field-label{font-size:.65rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.35rem}
+  .field-desc{font-size:.62rem;color:var(--muted);margin-top:.3rem;line-height:1.5}
+  input[type="text"],textarea,select{width:100%;background:var(--code-bg);border:1px solid var(--border);border-radius:5px;color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:.8rem;padding:.55rem .75rem;outline:none;transition:border-color .2s}
+  input:focus,textarea:focus,select:focus{border-color:var(--accent)}
+  textarea{resize:vertical;min-height:80px}
+  .radio-group{display:flex;gap:.5rem;flex-wrap:wrap}
+  .radio-chip{cursor:pointer;padding:.35rem .8rem;border-radius:20px;border:1px solid var(--border);font-size:.72rem;color:var(--muted);transition:all .15s;user-select:none}
+  .radio-chip:hover{border-color:var(--accent);color:var(--text)}
+  .radio-chip.active{border-color:var(--accent);background:rgba(0,229,255,.08);color:var(--accent)}
+  .btn{padding:.65rem 1.25rem;border-radius:6px;border:none;cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:.78rem;font-weight:600;letter-spacing:.05em;transition:all .2s}
+  .btn-connect{background:var(--accent);color:#000}
+  .btn-connect:hover{background:#33eaff;transform:translateY(-1px)}
+  .btn-connect:disabled{opacity:.4;cursor:not-allowed;transform:none}
+  .btn-disconnect{background:transparent;border:1px solid var(--red);color:var(--red)}
+  .btn-disconnect:hover{background:rgba(255,77,109,.1)}
+  .btn-send{background:var(--accent2);color:#fff}
+  .btn-send:hover{background:#8b5cf6}
+  .btn-send:disabled{opacity:.4;cursor:not-allowed}
+  .btn-row{display:flex;gap:.75rem}
+  .status-bar{display:flex;align-items:center;gap:.6rem;padding:.6rem 1rem;background:var(--code-bg);border-top:1px solid var(--border);font-size:.7rem;color:var(--muted)}
+  .status-text{flex:1}
+  .status-text.connected{color:var(--green)}
+  .status-text.connecting{color:var(--yellow)}
+  .status-text.error{color:var(--red)}
+  .log-body{padding:0;height:360px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+  .log-entry{padding:.45rem 1rem;font-size:.72rem;line-height:1.5;border-bottom:1px solid rgba(30,33,40,.5);display:grid;grid-template-columns:5.5rem auto 1fr;gap:.75rem;align-items:start;animation:fadeIn .2s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(3px)}to{opacity:1}}
+  .log-ts{color:var(--muted);font-size:.65rem;padding-top:.05rem}
+  .log-tag{font-size:.6rem;font-weight:700;letter-spacing:.08em;padding:.15rem .5rem;border-radius:3px;text-transform:uppercase;justify-self:start}
+  .log-tag.sent{background:rgba(124,58,237,.2);color:#a78bfa}
+  .log-tag.recv{background:rgba(34,211,166,.15);color:var(--green)}
+  .log-tag.sys{background:rgba(0,229,255,.1);color:var(--accent)}
+  .log-tag.err{background:rgba(255,77,109,.15);color:var(--red)}
+  .log-msg{color:var(--text);word-break:break-all}
+  .send-row{display:flex;gap:.5rem;padding:.75rem;border-top:1px solid var(--border);background:var(--code-bg)}
+  .send-row input{flex:1;margin-bottom:0}
+  .code-panel{grid-column:1 / -1}
+  .code-body{padding:1.25rem;overflow-x:auto}
+  pre{font-size:.75rem;line-height:1.7;color:#adbac7;white-space:pre}
+  .kw{color:#ff79c6}.str{color:#f1fa8c}.fn{color:#50fa7b}.cm{color:#6272a4}.num{color:#bd93f9}.prop{color:#8be9fd}.val{color:var(--accent)}
+  .tabs{display:flex;border-bottom:1px solid var(--border)}
+  .tab{padding:.6rem 1rem;font-size:.68rem;color:var(--muted);cursor:pointer;letter-spacing:.08em;text-transform:uppercase;border-bottom:2px solid transparent;transition:all .15s;user-select:none}
+  .tab:hover{color:var(--text)}
+  .tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+  .tab-content{display:none}
+  .tab-content.active{display:block}
+  code{color:var(--accent)}
+</style>
+</head>
+<body>
+<header>
+  <h1>WebSocket</h1>
+  <span class="subtitle">preamble · kind · protocol</span>
+</header>
+<div class="layout">
+
+  <!-- CONFIG -->
+  <div class="panel">
+    <div class="panel-header">
+      <div class="dot yellow" id="dot"></div>
+      configuration
+    </div>
+    <div class="config-body">
+      <div>
+        <div class="field-label">URL</div>
+        <input type="text" id="url" value="wss://echo.websocket.org" />
+      </div>
+      <div>
+        <div class="field-label">Protocol <span style="color:var(--muted);font-size:.6rem">(subprotocol)</span></div>
+        <div class="radio-group" id="proto-chips">
+          <div class="radio-chip active" data-val="">none</div>
+          <div class="radio-chip" data-val="json">json</div>
+          <div class="radio-chip" data-val="graphql-ws">graphql-ws</div>
+          <div class="radio-chip" data-val="mqtt">mqtt</div>
+          <div class="radio-chip" data-val="custom">custom</div>
+        </div>
+        <input type="text" id="proto-custom" placeholder="custom protocol string" style="margin-top:.5rem;display:none" />
+        <div class="field-desc">Passed as the <code>protocols</code> arg to <code>new WebSocket(url, protocols)</code>. Server must agree via <code>Sec-WebSocket-Protocol</code> response header.</div>
+      </div>
+      <div>
+        <div class="field-label">Kind <span style="color:var(--muted);font-size:.6rem">(binaryType)</span></div>
+        <div class="radio-group" id="kind-chips">
+          <div class="radio-chip active" data-val="text">text</div>
+          <div class="radio-chip" data-val="arraybuffer">binary (ArrayBuffer)</div>
+          <div class="radio-chip" data-val="blob">binary (Blob)</div>
+        </div>
+        <div class="field-desc">Sets <code>ws.binaryType</code> for incoming frames. Text frames always arrive as <code>string</code> regardless.</div>
+      </div>
+      <div>
+        <div class="field-label">Preamble</div>
+        <textarea id="preamble" placeholder='{"type":"auth","token":"abc123"}'></textarea>
+        <div class="field-desc">Sent automatically on <code>open</code>. Use for auth handshakes, protocol init frames, or subscription setup.</div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-connect" id="btn-connect" onclick="connect()">Connect</button>
+        <button class="btn btn-disconnect" id="btn-disconnect" onclick="disconnect()" disabled>Disconnect</button>
+      </div>
+    </div>
+    <div class="status-bar">
+      <div class="dot" id="status-dot"></div>
+      <span class="status-text" id="status-text">disconnected</span>
+    </div>
+  </div>
+
+  <!-- LOG -->
+  <div class="panel">
+    <div class="panel-header">
+      <div class="dot"></div>
+      message log
+      <span style="margin-left:auto;cursor:pointer;color:var(--muted)" onclick="clearLog()">✕ clear</span>
+    </div>
+    <div class="log-body" id="log"></div>
+    <div class="send-row">
+      <input type="text" id="msg-input" placeholder='{"hello":"world"}' onkeydown="if(event.key==='Enter')sendMsg()" disabled />
+      <button class="btn btn-send" id="btn-send" onclick="sendMsg()" disabled>Send</button>
+    </div>
+  </div>
+
+  <!-- CODE -->
+  <div class="panel code-panel">
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('js')">JavaScript</div>
+      <div class="tab" onclick="switchTab('ts')">TypeScript</div>
+      <div class="tab" onclick="switchTab('python')">Python</div>
+    </div>
+    <div class="tab-content active" id="tab-js"><div class="code-body"><pre id="code-js"></pre></div></div>
+    <div class="tab-content" id="tab-ts"><div class="code-body"><pre id="code-ts"></pre></div></div>
+    <div class="tab-content" id="tab-python"><div class="code-body"><pre id="code-python"></pre></div></div>
+  </div>
+
+</div>
+
+<script>
+let ws = null, selectedProto = '', selectedKind = 'text';
+
+document.querySelectorAll('#proto-chips .radio-chip').forEach(c=>{
+  c.addEventListener('click',()=>{
+    document.querySelectorAll('#proto-chips .radio-chip').forEach(x=>x.classList.remove('active'));
+    c.classList.add('active'); selectedProto=c.dataset.val;
+    document.getElementById('proto-custom').style.display=selectedProto==='custom'?'':'none';
+    updateCode();
+  });
+});
+document.querySelectorAll('#kind-chips .radio-chip').forEach(c=>{
+  c.addEventListener('click',()=>{
+    document.querySelectorAll('#kind-chips .radio-chip').forEach(x=>x.classList.remove('active'));
+    c.classList.add('active'); selectedKind=c.dataset.val; updateCode();
+  });
+});
+['url','preamble','proto-custom'].forEach(id=>document.getElementById(id).addEventListener('input',updateCode));
+
+function getProto(){return selectedProto==='custom'?document.getElementById('proto-custom').value.trim():selectedProto}
+
+function connect(){
+  const url=document.getElementById('url').value.trim();
+  const proto=getProto(), preamble=document.getElementById('preamble').value.trim();
+  setStatus('connecting','connecting…');
+  try{ ws=proto?new WebSocket(url,proto):new WebSocket(url); }
+  catch(e){ setStatus('error',`Error: ${e.message}`); return; }
+  ws.binaryType=selectedKind==='blob'?'blob':'arraybuffer';
+  ws.onopen=()=>{
+    setStatus('connected',`connected · ${proto||'no protocol'} · ${selectedKind}`);
+    setButtons(true);
+    log('sys',`opened → ${url}${proto?` [${proto}]`:''}`);
+    if(preamble){ws.send(preamble);log('sent',`[preamble] ${preamble}`);}
+  };
+  ws.onmessage=e=>{
+    if(e.data instanceof ArrayBuffer) log('recv',`[ArrayBuffer] ${e.data.byteLength} bytes`);
+    else if(e.data instanceof Blob) log('recv',`[Blob] ${e.data.size} bytes`);
+    else log('recv',e.data);
+  };
+  ws.onclose=e=>{setStatus('','disconnected');setButtons(false);log('sys',`closed (code ${e.code})`);};
+  ws.onerror=()=>{setStatus('error','connection error');log('err','WebSocket error — check URL / CORS / server');};
+}
+function disconnect(){if(ws)ws.close();}
+function sendMsg(){
+  const input=document.getElementById('msg-input'),text=input.value.trim();
+  if(!text||!ws||ws.readyState!==WebSocket.OPEN)return;
+  ws.send(text);log('sent',text);input.value='';
+}
+function setStatus(cls,msg){
+  const el=document.getElementById('status-text');
+  el.className='status-text '+cls; el.textContent=msg;
+  const d=document.getElementById('status-dot');
+  d.className='dot'+(cls==='connected'?' green':cls==='error'?' red':cls==='connecting'?' yellow':'');
+}
+function setButtons(on){
+  document.getElementById('btn-connect').disabled=on;
+  document.getElementById('btn-disconnect').disabled=!on;
+  document.getElementById('btn-send').disabled=!on;
+  document.getElementById('msg-input').disabled=!on;
+}
+function log(tag,msg){
+  const el=document.getElementById('log');
+  const ts=new Date().toLocaleTimeString('en-US',{hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const row=document.createElement('div');row.className='log-entry';
+  row.innerHTML=`<span class="log-ts">${ts}</span><span class="log-tag ${tag}">${tag}</span><span class="log-msg">${esc(msg)}</span>`;
+  el.appendChild(row);el.scrollTop=el.scrollHeight;
+}
+function clearLog(){document.getElementById('log').innerHTML='';}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function h(cls,str){return `<span class="${cls}">${esc(str)}</span>`;}
+function switchTab(id){
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['js','ts','python'][i]===id));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+}
+function updateCode(){
+  const url=document.getElementById('url').value.trim()||'wss://echo.websocket.org';
+  const proto=getProto(), preamble=document.getElementById('preamble').value.trim(), kind=selectedKind;
+  const protoArg=proto?`, ${h('str',`"${proto}"`)}`:' ';
+  const binaryLine=kind!=='text'?`\nws.<span class="prop">binaryType</span> = ${h('str',`"${kind==='blob'?'blob':'arraybuffer'}"`)}; ${h('cm','// receive binary as '+(kind==='blob'?'Blob':'ArrayBuffer'))}`:''  ;
+  const preambleBlock=preamble?`\n  ${h('cm','// preamble — sent immediately on open')}\n  ws.<span class="fn">send</span>(${h('str','`'+preamble.replace(/`/g,'\\`')+'`')});`:`  ${h('cm','// (no preamble configured)')}`;
+
+  document.getElementById('code-js').innerHTML=
+`${h('cm','// 1. create socket — protocol negotiated via Sec-WebSocket-Protocol header')}
+${h('kw','const')} ws = ${h('kw','new')} <span class="fn">WebSocket</span>(${h('str',`"${url}"`)}${protoArg});${binaryLine}
+
+${h('cm','// 2. lifecycle events')}
+ws.<span class="prop">onopen</span> = () => {
+${preambleBlock}
+  <span class="fn">console</span>.<span class="fn">log</span>(${h('str','"connected, protocol:"')}, ws.<span class="prop">protocol</span>);
+};
+
+ws.<span class="prop">onmessage</span> = (e) => {
+  ${h('cm','// e.data → string | ArrayBuffer | Blob  (depends on binaryType + frame type)')}
+  <span class="fn">console</span>.<span class="fn">log</span>(${h('str','"recv:"')}, e.<span class="prop">data</span>);
+};
+
+ws.<span class="prop">onclose</span> = (e) => <span class="fn">console</span>.<span class="fn">log</span>(${h('str','"closed"')}, e.<span class="prop">code</span>, e.<span class="prop">reason</span>);
+ws.<span class="prop">onerror</span> = (e) => <span class="fn">console</span>.<span class="fn">error</span>(${h('str','"error"')}, e);
+
+${h('cm','// 3. send')}
+ws.<span class="fn">send</span>(${h('str','"hello world"')});          ${h('cm','// text frame')}
+ws.<span class="fn">send</span>(${h('kw','new')} <span class="fn">Uint8Array</span>([${h('num','0x01')},${h('num','0x02')}])); ${h('cm','// binary frame')}`;
+
+  document.getElementById('code-ts').innerHTML=
+`${h('cm','// Typed wrapper — preamble · kind · protocol')}
+${h('kw','interface')} <span class="val">SocketConfig</span> {
+  url:       <span class="val">string</span>;
+  protocol?: <span class="val">string</span>;             ${h('cm','// Sec-WebSocket-Protocol subprotocol')}
+  kind:      <span class="val">"text"</span> | <span class="val">"arraybuffer"</span> | <span class="val">"blob"</span>;
+  preamble?: <span class="val">string</span>;             ${h('cm','// frame sent immediately on open')}
+}
+
+${h('kw','function')} <span class="fn">createSocket</span>(cfg: <span class="val">SocketConfig</span>): <span class="val">WebSocket</span> {
+  ${h('kw','const')} ws = cfg.protocol
+    ? ${h('kw','new')} <span class="fn">WebSocket</span>(cfg.<span class="prop">url</span>, cfg.<span class="prop">protocol</span>)
+    : ${h('kw','new')} <span class="fn">WebSocket</span>(cfg.<span class="prop">url</span>);
+
+  ws.<span class="prop">binaryType</span> = cfg.kind === <span class="val">"text"</span> ? <span class="val">"blob"</span> : cfg.<span class="prop">kind</span>;
+
+  ws.<span class="prop">addEventListener</span>(<span class="val">"open"</span>, () => {
+    ${h('kw','if')} (cfg.<span class="prop">preamble</span>) ws.<span class="fn">send</span>(cfg.<span class="prop">preamble</span>);
+  });
+
+  ${h('kw','return')} ws;
+}
+
+${h('cm','// usage')}
+${h('kw','const')} ws = <span class="fn">createSocket</span>({
+  url:      ${h('str',`"${url}"`)},${proto?`\n  protocol: ${h('str',`"${proto}"`+',')}`:''} 
+  kind:     ${h('str',`"${kind}"`)},${preamble?`\n  preamble: ${h('str','`'+preamble.replace(/`/g,'\\`')+'`')}`:'' }
+});`;
+
+  document.getElementById('code-python').innerHTML=
+`${h('cm','# pip install websockets')}
+${h('kw','import')} asyncio, websockets
+
+${h('kw','async def')} <span class="fn">run</span>():
+    ${h('kw','async with')} websockets.<span class="fn">connect</span>(
+        ${h('str',`"${url}"`)},${proto?`\n        subprotocols=[${h('str',`"${proto}"`)}],`:''}
+    ) ${h('kw','as')} ws:
+        ${preamble?`${h('cm','# preamble')}\n        ${h('kw','await')} ws.<span class="fn">send</span>(${h('str',`'${preamble.replace(/'/g,"\\'")}' `)})`:h('cm','# no preamble')}
+
+        ${h('cm','# send a text frame')}
+        ${h('kw','await')} ws.<span class="fn">send</span>(${h('str','"hello"')})
+
+        ${h('cm','# recv returns str (text) or bytes (binary)')}
+        msg = ${h('kw','await')} ws.<span class="fn">recv</span>()
+        <span class="fn">print</span>(msg)
+
+asyncio.<span class="fn">run</span>(<span class="fn">run</span>())`;
+}
+updateCode();
+</script>
+</body>
+</html>
